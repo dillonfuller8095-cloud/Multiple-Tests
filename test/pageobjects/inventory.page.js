@@ -11,27 +11,20 @@ class InventoryPage extends Page {
         return $('.shopping_cart_link')
     }
 
-    get firstItemAddBtn () {
-        return $('#add-to-cart-sauce-labs-backpack')
+    get addToCartButton () {
+        return $('button*=Add to cart')
     }
 
-    open () {
-        return super.open('inventory.html') // 🔥 FORCE correct page
-    }
-
-    async openMenu() {
-        await this.burgerMenu.waitForDisplayed({ timeout: 10000 })
+    async openMenu () {
         await this.burgerMenu.click()
     }
 
-    async openCart() {
-        await this.cartIcon.waitForDisplayed({ timeout: 10000 })
-        await this.cartIcon.click()
+    async addItemToCart () {
+        await this.addToCartButton.click()
     }
 
-    async addItemToCart() {
-        await this.firstItemAddBtn.waitForDisplayed({ timeout: 10000 })
-        await this.firstItemAddBtn.click()
+    async openCart () {
+        await this.cartIcon.click()
     }
 }
 
