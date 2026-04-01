@@ -2,24 +2,21 @@ import { $ } from '@wdio/globals'
 
 class CartPage {
 
-    get cartItem () {
+    get cartItem() {
         return $('.cart_item')
     }
 
-    get checkoutBtn () {
+    get checkoutBtn() {
         return $('#checkout')
     }
 
-    get continueShopping () {
-        return $('#continue-shopping')
+    get removeBtn() {
+        return $('#remove-sauce-labs-backpack')
     }
 
-    async clickCheckout () {
-        await this.checkoutBtn.click()
-    }
-
-    async clickContinueShopping () {
-        await this.continueShopping.click()
+    async removeItem() {
+        await this.removeBtn.waitForClickable({ timeout: 10000 })
+        await this.removeBtn.click()
     }
 }
 
