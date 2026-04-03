@@ -3,22 +3,24 @@ import Page from './page.js'
 
 class LoginPage extends Page {
 
-    get inputUsername () {
-        return $('#user-name')
+    get username() { return $('#user-name') }
+    get password() { return $('#password') }
+    get loginBtn() { return $('#login-button') }
+
+    async enterUsername(user) {
+        await this.username.setValue(user)
     }
 
-    get inputPassword () {
-        return $('#password')
+    async enterPassword(pass) {
+        await this.password.setValue(pass)
     }
 
-    get btnLogin () {
-        return $('#login-button')
+    async clickLogin() {
+        await this.loginBtn.click()
     }
 
-    async login (username, password) {
-        await this.inputUsername.setValue(username)
-        await this.inputPassword.setValue(password)
-        await this.btnLogin.click()
+    open() {
+        return super.open('')
     }
 }
 
