@@ -43,9 +43,7 @@ describe('SauceDemo FULL QA Assertions', () => {
         await expect(InventoryPage.cartIcon).toBeDisplayed()
     })
 
-    // ─────────────────────────────────────────────
-    // 🚨 NEGATIVE LOGIN TESTS
-    // ─────────────────────────────────────────────
+    //  NEGATIVE LOGIN TESTS
 
     it('negative - wrong password shows error', async () => {
 
@@ -112,9 +110,8 @@ describe('SauceDemo FULL QA Assertions', () => {
         await expect(await browser.getUrl()).not.toContain('inventory.html')
     })
 
-    // ─────────────────────────────────────────────
-    // 🚨 CART BADGE UI TESTS
-    // ─────────────────────────────────────────────
+
+    // CART BADGE UI TESTS
 
     it('cart badge shows 1 after adding one item', async () => {
 
@@ -154,9 +151,8 @@ describe('SauceDemo FULL QA Assertions', () => {
         await expect(InventoryPage.cartBadge).not.toBeDisplayed()
     })
 
-    // ─────────────────────────────────────────────
     // BUTTON STATE CHANGE TESTS
-    // ─────────────────────────────────────────────
+    
 
     it('add to cart button changes to remove after click', async () => {
 
@@ -188,9 +184,8 @@ describe('SauceDemo FULL QA Assertions', () => {
         await expect(InventoryPage.addBackpack).toBeDisplayed()
     })
 
-    // ─────────────────────────────────────────────
+   
     // NAVIGATION FLOW TESTS
-    // ─────────────────────────────────────────────
 
     it('cart icon navigates to cart page', async () => {
 
@@ -225,9 +220,9 @@ describe('SauceDemo FULL QA Assertions', () => {
         await expect(InventoryPage.inventoryItems).toBeDisplayed()
     })
 
-    // ─────────────────────────────────────────────
+
     // MENU CLOSE TESTS
-    // ─────────────────────────────────────────────
+    
 
     it('hamburger menu opens and closes correctly', async () => {
 
@@ -260,9 +255,7 @@ describe('SauceDemo FULL QA Assertions', () => {
         await expect(MenuPage.about).toBeDisplayed()
     })
 
-    // ─────────────────────────────────────────────
     // EDGE CASE TESTS
-    // ─────────────────────────────────────────────
 
     it('edge case - cart persists items after navigating away and back', async () => {
 
@@ -293,9 +286,9 @@ describe('SauceDemo FULL QA Assertions', () => {
         await expect(await CartPage.cartItems.length).toBe(0)
     })
 
-    // ─────────────────────────────────────────────
+    
     // CORE TESTS
-    // ─────────────────────────────────────────────
+     
 
     // MTQA-5142 - View Item in Cart
     it('add item to cart with full validation', async () => {
