@@ -1,44 +1,50 @@
-import { $ , browser } from '@wdio/globals'
+import { $, $$ } from '@wdio/globals'
 import Page from './page.js'
 
 class InventoryPage extends Page {
 
-    get burgerMenu() { return $('#react-burger-menu-btn') }
-    get cartIcon() { return $('.shopping_cart_link') }
+    get burgerMenu ()     { return $('#react-burger-menu-btn') }
+    get cartIcon ()       { return $('.shopping_cart_link') }
+    get cartBadge ()      { return $('.shopping_cart_badge') }
+    get addBackpack ()    { return $('[data-test="add-to-cart-sauce-labs-backpack"]') }
+    get removeBackpack () { return $('[data-test="remove-sauce-labs-backpack"]') }
+    get addBikeLight ()   { return $('[data-test="add-to-cart-sauce-labs-bike-light"]') }
+    get inventoryItems () { return $('.inventory_list') }
 
-    get addBackpack() { return $('#add-to-cart-sauce-labs-backpack') }
-
-    async waitForPage() {
-        await browser.waitUntil(async () => {
-            return await this.burgerMenu.isDisplayed()
-        }, {
-            timeout: 15000,
-            timeoutMsg: 'Inventory page did not load'
-        })
+    open () {
+        return super.open('inventory.html')
     }
 
-    async addBackpackToCart() {
-        await browser.waitUntil(async () => {
-            return await this.addBackpack.isDisplayed()
-        }, {
-            timeout: 15000,
-            timeoutMsg: 'Backpack button not visible'
-        })
-
-        await this.addBackpack.click()
-    }
-
-    async openMenu() {
+    async openMenu () {
+        await this.burgerMenu.waitForDisplayed({ timeout: 10000 })
         await this.burgerMenu.click()
     }
 
-    async openCart() {
+    async closeMenu () {
+        await $('#react-burger-cross-btn').waitForDisplayed({ timeout: 10000 })
+        await $('#react-burger-cross-btn').click()
+    }
+
+    async openCart () {
+        await this.cartIcon.waitForDisplayed({ timeout: 10000 })
         await this.cartIcon.click()
     }
 
-    open() {
-        return super.open('inventory.html')
+    async addBackpackToCart () {
+        await this.addBackpack.waitForDisplayed({ timeout: 10000 })
+        await this.addBackpack.click()
     }
+
+    async removeBackpackFromInventory () {
+        await this.removeBackpack.waitForDisplayed({ timeout: 10000 })
+        await this.removeBackpack.click()
+    }
+
+    async addBikeLightToCart () {
+        await this.addBikeLight.waitForDisplayed({ timeout: 10000 })
+        await this.addBikeLight.click()
+    }
+
 }
 
 export default new InventoryPage()

@@ -3,25 +3,21 @@ import Page from './page.js'
 
 class LoginPage extends Page {
 
-    get username() { return $('#user-name') }
-    get password() { return $('#password') }
-    get loginBtn() { return $('#login-button') }
+    get inputUsername () { return $('#user-name') }
+    get inputPassword () { return $('#password') }
+    get btnSubmit ()     { return $('#login-button') }
+    get errorMessage ()  { return $('[data-test="error"]') }
 
-    async enterUsername(user) {
-        await this.username.setValue(user)
+    async login (username, password) {
+        await this.inputUsername.setValue(username)
+        await this.inputPassword.setValue(password)
+        await this.btnSubmit.click()
     }
 
-    async enterPassword(pass) {
-        await this.password.setValue(pass)
+    open () {
+        return super.open()
     }
 
-    async clickLogin() {
-        await this.loginBtn.click()
-    }
-
-    open() {
-        return super.open('')
-    }
 }
 
 export default new LoginPage()

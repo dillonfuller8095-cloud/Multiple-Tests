@@ -1,19 +1,23 @@
-import { $ } from '@wdio/globals'
+import { $, $$ } from '@wdio/globals'
 
 class CartPage {
 
-    get cartItem() {
-        return $('.inventory_item_name')
+    get cartContainer () { return $('#cart_contents_container') }
+    get cartItem ()      { return $('.cart_item') }
+    get cartItems ()     { return $$('.cart_item') }
+    get checkoutBtn ()   { return $('#checkout') }
+
+    async removeAllItems () {
+        const removeButtons = await $$('.cart_button')
+        for (const btn of removeButtons) {
+            await btn.click()
+        }
     }
 
-    get removeBtn() {
-        return $('#remove-sauce-labs-backpack')
+    async continueShopping () {
+        await $('[data-test="continue-shopping"]').click()
     }
 
-    async removeItem() {
-        await this.removeBtn.waitForDisplayed()
-        await this.removeBtn.click()
-    }
 }
 
 export default new CartPage()
