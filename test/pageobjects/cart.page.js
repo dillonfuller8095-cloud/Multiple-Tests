@@ -1,4 +1,4 @@
-import { $, $$ } from '@wdio/globals'
+import { $, $$, browser } from '@wdio/globals'
 
 class CartPage {
 
@@ -6,6 +6,12 @@ class CartPage {
     get cartItem ()      { return $('.cart_item') }
     get cartItems ()     { return $$('.cart_item') }
     get checkoutBtn ()   { return $('#checkout') }
+
+    async waitForPage () {
+        await browser.waitUntil(async () => {
+            return (await browser.getUrl()).includes('cart.html')
+        }, { timeout: 15000 })
+    }
 
     async removeAllItems () {
         const removeButtons = await $$('.cart_button')
@@ -15,6 +21,7 @@ class CartPage {
     }
 
     async continueShopping () {
+        await $('[data-test="continue-shopping"]').waitForDisplayed({ timeout: 10000 })
         await $('[data-test="continue-shopping"]').click()
     }
 
