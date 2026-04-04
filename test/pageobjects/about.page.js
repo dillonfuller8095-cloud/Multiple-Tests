@@ -4,8 +4,7 @@ class AboutPage {
 
     async waitForPage () {
         await browser.waitUntil(async () => {
-            const url = await browser.getUrl()
-            return url.includes('saucelabs.com')
+            return (await browser.getUrl()).includes('saucelabs.com')
         }, { timeout: 15000 })
     }
 
