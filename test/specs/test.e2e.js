@@ -9,50 +9,29 @@ describe('SauceDemo FULL QA Assertions', () => {
 
     beforeEach(async () => {
 
-        // reset session
-        await browser.reloadSession()
-
-        // go to site
-        await browser.url('https://www.saucedemo.com/')
+        await LoginPage.resetAndOpen()
 
         // ASSERT - Login page is displayed (MTQA-5140)
         await expect(LoginPage.inputUsername).toBeDisplayed()
         await expect(LoginPage.inputPassword).toBeDisplayed()
         await expect(LoginPage.btnSubmit).toBeDisplayed()
 
-        // enter credentials
-        await LoginPage.inputUsername.setValue('standard_user')
-
-        // ASSERT - Username entered successfully (MTQA-5140)
-        await expect(LoginPage.inputUsername).toHaveValue('standard_user')
-
-        await LoginPage.inputPassword.setValue('secret_sauce')
-
-        // ASSERT - Password entered successfully (MTQA-5140)
-        await expect(LoginPage.inputPassword).toHaveValue('secret_sauce')
-
-        // click login
-        await LoginPage.btnSubmit.click()
+        await LoginPage.login('standard_user', 'secret_sauce')
 
         // ASSERT - User is redirected to inventory page (MTQA-5140)
-        await browser.waitUntil(async () => {
-            return (await browser.getUrl()).includes('inventory.html')
-        }, { timeout: 15000 })
+        await LoginPage.waitForInventory()
 
         await expect(InventoryPage.burgerMenu).toBeDisplayed()
         await expect(InventoryPage.cartIcon).toBeDisplayed()
     })
 
-    //  NEGATIVE LOGIN TESTS
+
+    // NEGATIVE LOGIN TESTS
 
     it('negative - wrong password shows error', async () => {
 
-        await browser.reloadSession()
-        await browser.url('https://www.saucedemo.com/')
-
-        await LoginPage.inputUsername.setValue('standard_user')
-        await LoginPage.inputPassword.setValue('wrong_password')
-        await LoginPage.btnSubmit.click()
+        await LoginPage.resetAndOpen()
+        await LoginPage.login('standard_user', 'wrong_password')
 
         // ASSERT - error message is displayed
         await expect(LoginPage.errorMessage).toBeDisplayed()
@@ -66,12 +45,8 @@ describe('SauceDemo FULL QA Assertions', () => {
 
     it('negative - wrong username shows error', async () => {
 
-        await browser.reloadSession()
-        await browser.url('https://www.saucedemo.com/')
-
-        await LoginPage.inputUsername.setValue('invalid_user')
-        await LoginPage.inputPassword.setValue('secret_sauce')
-        await LoginPage.btnSubmit.click()
+        await LoginPage.resetAndOpen()
+        await LoginPage.login('invalid_user', 'secret_sauce')
 
         // ASSERT - error message is displayed
         await expect(LoginPage.errorMessage).toBeDisplayed()
@@ -82,10 +57,8 @@ describe('SauceDemo FULL QA Assertions', () => {
 
     it('negative - empty fields show error', async () => {
 
-        await browser.reloadSession()
-        await browser.url('https://www.saucedemo.com/')
-
-        await LoginPage.btnSubmit.click()
+        await LoginPage.resetAndOpen()
+        await LoginPage.submitEmpty()
 
         // ASSERT - error message is displayed
         await expect(LoginPage.errorMessage).toBeDisplayed()
@@ -96,12 +69,8 @@ describe('SauceDemo FULL QA Assertions', () => {
 
     it('negative - locked out user shows error', async () => {
 
-        await browser.reloadSession()
-        await browser.url('https://www.saucedemo.com/')
-
-        await LoginPage.inputUsername.setValue('locked_out_user')
-        await LoginPage.inputPassword.setValue('secret_sauce')
-        await LoginPage.btnSubmit.click()
+        await LoginPage.resetAndOpen()
+        await LoginPage.login('locked_out_user', 'secret_sauce')
 
         // ASSERT - error message is displayed
         await expect(LoginPage.errorMessage).toBeDisplayed()
@@ -151,8 +120,8 @@ describe('SauceDemo FULL QA Assertions', () => {
         await expect(InventoryPage.cartBadge).not.toBeDisplayed()
     })
 
+
     // BUTTON STATE CHANGE TESTS
-    
 
     it('add to cart button changes to remove after click', async () => {
 
@@ -184,17 +153,13 @@ describe('SauceDemo FULL QA Assertions', () => {
         await expect(InventoryPage.addBackpack).toBeDisplayed()
     })
 
-   
+
     // NAVIGATION FLOW TESTS
 
     it('cart icon navigates to cart page', async () => {
 
         await InventoryPage.openCart()
-
-        // ASSERT - URL is cart page
-        await browser.waitUntil(async () => {
-            return (await browser.getUrl()).includes('cart.html')
-        }, { timeout: 15000 })
+        await CartPage.waitForPage()
 
         // ASSERT - cart container is displayed
         await expect(CartPage.cartContainer).toBeDisplayed()
@@ -203,17 +168,11 @@ describe('SauceDemo FULL QA Assertions', () => {
     it('continue shopping navigates back to inventory', async () => {
 
         await InventoryPage.openCart()
-
-        await browser.waitUntil(async () => {
-            return (await browser.getUrl()).includes('cart.html')
-        }, { timeout: 15000 })
-
+        await CartPage.waitForPage()
         await CartPage.continueShopping()
 
         // ASSERT - back on inventory page
-        await browser.waitUntil(async () => {
-            return (await browser.getUrl()).includes('inventory.html')
-        }, { timeout: 15000 })
+        await LoginPage.waitForInventory()
 
         // ASSERT - inventory elements visible
         await expect(InventoryPage.burgerMenu).toBeDisplayed()
@@ -221,8 +180,7 @@ describe('SauceDemo FULL QA Assertions', () => {
     })
 
 
-    // MENU CLOSE TESTS
-    
+    // HAMBURGER MENU TESTS
 
     it('hamburger menu opens and closes correctly', async () => {
 
@@ -249,11 +207,12 @@ describe('SauceDemo FULL QA Assertions', () => {
         await InventoryPage.closeMenu()
         await InventoryPage.openMenu()
 
-        // ASSERT - menu still works correctly
+        // ASSERT - menu still works correctly after repeated use
         await expect(MenuPage.resetApp).toBeDisplayed()
         await expect(MenuPage.logout).toBeDisplayed()
         await expect(MenuPage.about).toBeDisplayed()
     })
+
 
     // EDGE CASE TESTS
 
@@ -274,10 +233,7 @@ describe('SauceDemo FULL QA Assertions', () => {
     it('edge case - empty cart navigates to cart page correctly', async () => {
 
         await InventoryPage.openCart()
-
-        await browser.waitUntil(async () => {
-            return (await browser.getUrl()).includes('cart.html')
-        }, { timeout: 15000 })
+        await CartPage.waitForPage()
 
         // ASSERT - cart page loads fine even when empty
         await expect(CartPage.cartContainer).toBeDisplayed()
@@ -286,9 +242,8 @@ describe('SauceDemo FULL QA Assertions', () => {
         await expect(await CartPage.cartItems.length).toBe(0)
     })
 
-    
+
     // CORE TESTS
-     
 
     // MTQA-5142 - View Item in Cart
     it('add item to cart with full validation', async () => {
@@ -305,10 +260,7 @@ describe('SauceDemo FULL QA Assertions', () => {
         await expect(InventoryPage.cartIcon).toBeDisplayed()
 
         await InventoryPage.openCart()
-
-        await browser.waitUntil(async () => {
-            return (await browser.getUrl()).includes('cart.html')
-        }, { timeout: 15000 })
+        await CartPage.waitForPage()
 
         // ASSERT - cart displays the added item (MTQA-5142)
         await expect(await CartPage.cartItems.length).toBeGreaterThan(0)
@@ -329,7 +281,7 @@ describe('SauceDemo FULL QA Assertions', () => {
         await expect(await CartPage.cartItems.length).toBe(0)
     })
 
-    // MTQA-5146 - Add Multiple Items
+    // MTQA-5147 - Add Multiple Items
     it('add multiple items and verify each step', async () => {
 
         await InventoryPage.addBackpackToCart()
@@ -344,7 +296,7 @@ describe('SauceDemo FULL QA Assertions', () => {
 
         await InventoryPage.openCart()
 
-        // ASSERT - exactly 2 items in cart (MTQA-5146)
+        // ASSERT - exactly 2 items in cart (MTQA-5147)
         await expect(await CartPage.cartItems.length).toBe(2)
     })
 
@@ -353,16 +305,17 @@ describe('SauceDemo FULL QA Assertions', () => {
 
         await InventoryPage.addBackpackToCart()
 
+        // ASSERT - cart icon is visible before reset
         await expect(InventoryPage.cartIcon).toBeDisplayed()
 
         await InventoryPage.openMenu()
 
-        // ASSERT - menu is displayed (MTQA-5141)
+        // ASSERT - reset link is displayed (MTQA-5141)
         await expect(MenuPage.resetApp).toBeDisplayed()
 
         await MenuPage.clickReset()
 
-        // ASSERT - still on inventory page
+        // ASSERT - still on inventory page after reset
         await expect(InventoryPage.burgerMenu).toBeDisplayed()
 
         await InventoryPage.openCart()
@@ -380,7 +333,6 @@ describe('SauceDemo FULL QA Assertions', () => {
         await expect(MenuPage.about).toBeDisplayed()
 
         await MenuPage.clickAbout()
-
         await AboutPage.waitForPage()
 
         // ASSERT - redirected to Sauce Labs website (MTQA-5145)
@@ -405,6 +357,7 @@ describe('SauceDemo FULL QA Assertions', () => {
     // MTQA-5231 - Inventory Item Display
     it('inventory items are displayed after login', async () => {
 
+        // ASSERT - burger menu visible
         await expect(InventoryPage.burgerMenu).toBeDisplayed()
 
         // ASSERT - inventory items are visible (MTQA-5231)
@@ -415,10 +368,7 @@ describe('SauceDemo FULL QA Assertions', () => {
     it('clicking cart icon opens cart page', async () => {
 
         await InventoryPage.openCart()
-
-        await browser.waitUntil(async () => {
-            return (await browser.getUrl()).includes('cart.html')
-        }, { timeout: 15000 })
+        await CartPage.waitForPage()
 
         // ASSERT - cart page container is displayed (MTQA-5228)
         await expect(CartPage.cartContainer).toBeDisplayed()
@@ -428,10 +378,7 @@ describe('SauceDemo FULL QA Assertions', () => {
     it('empty cart shows no items', async () => {
 
         await InventoryPage.openCart()
-
-        await browser.waitUntil(async () => {
-            return (await browser.getUrl()).includes('cart.html')
-        }, { timeout: 15000 })
+        await CartPage.waitForPage()
 
         // ASSERT - cart is empty (MTQA-5234)
         await expect(await CartPage.cartItems.length).toBe(0)
